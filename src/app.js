@@ -1,37 +1,27 @@
 const express = require("express");
+const {adminAuth} = require("./middlewares/auth")
+const {userAuth} = require("./middlewares/auth")
 
 const app = express();
 const PORT = 3000;
 
-app.use("/test", (req, res) => {
-  res.send("test data....");
-});
-app.use("/hello", (req, res) => {
-  res.send("helloooo..");
-});
-app.use("/", (req, res) => {
-  res.send("helloooo from homepage..");
-});
-
-app.get("/user", (req, res) => {
-  res.send({
-    firstName: "Naveen",
-    lastName: "Kaushik",
-  });
-});
-
-app.post("/user", (req, res) => {
-  res.send("Data send to DB Successfully!");
-});
-
-app.delete("/user", (req, res) => {
-  res.send("Data Deleted Successfully");
-});
+// middleware
+app.use("/admin", adminAuth);
 
 
-// this will match all the HTTP Method API calls to /test
-app.use("/test", (req, res) => {
-  res.send("test data....");
+app.post("/user/login", (req,res)=>{
+  res.send("User loggedin successfully")
+})
+
+app.get("/user/data", userAuth, (req, res) => {
+  res.send("User Data sent!");
+});
+
+app.get("/admin/getAllData", (req, res) => {
+  res.send("All data send!");
+});
+app.get("/admin/deleteUser", (req, res) => {
+  res.send("Deleted a user!");
 });
 
 app.listen(PORT, () => {
