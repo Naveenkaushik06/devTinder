@@ -1,9 +1,9 @@
 const express = require("express");
 const connectDB = require("./config/database");
+const User = require("./models/user");
 
 const app = express();
 const PORT = 3000;
-const User = require("./models/user");
 
 app.use(express.json());
 
@@ -35,7 +35,7 @@ app.get("/user", async (req, res) => {
 });
 
 // findOne
-app.get("/userss", async (req, res) => {
+app.get("/users", async (req, res) => {
   const email = req.body.emailId;
   try {
     const users = await User.findOne({ emailId: email });
@@ -95,16 +95,17 @@ app.patch("/user", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
+      runValidators:true,
     });
     console.log(user);
     res.send("User updated successfully!");
   } catch (err) {
-    console.log("Something went wrong");
+    res.status(400).send("UPDATE FAILED: " + err.message);
   }
 });
 
 // Update data of a user by email
-app.patch("/userss", async (req, res) => {
+app.patch("/users", async (req, res) => {
   const emailId = req.body.emailId;
   console.log(emailId);
   const data = req.body;
@@ -113,7 +114,7 @@ app.patch("/userss", async (req, res) => {
     const user = await User.findOneAndUpdate(
       { emailId: emailId },
       { firstName: "Anup", lastName: "Kumar", age: 26 },
-      { returnDocument: "after" }
+      { returnDocument: "after",  runValidators:true, },
     );
     console.log(user);
     res.send("User updated successfully!");
